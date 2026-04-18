@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <title>Privacy Policy — RepForgee</title>
+    <style>
+        :root {
+          --bg:       #0A0A0A;
+          --surface:  #111111;
+          --card:     #1A1A1A;
+          --card2:    #222222;
+          --neon:     #CCFF00;
+          --blue:     #00E5FF;
+          --pink:     #FF2D78;
+          --white:    #FFFFFF;
+          --muted:    #666666;
+          --dim:      #333333;
+          --border:   #222222;
+          --radius:   10px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+          background: var(--bg);
+          color: var(--white);
+          font-family: 'Courier New', 'Lucida Console', monospace;
+          font-size: 14px;
+          line-height: 1.65;
+          padding-bottom: 60px;
+          -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── HERO ─────────────────────────────────────────── */
+        .hero {
+          padding: 36px 24px 28px;
+          border-bottom: 1px solid var(--border);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .hero::before {
+          content: '';
+          position: absolute;
+          top: -60px; right: -60px;
+          width: 200px; height: 200px;
+          background: radial-gradient(circle, rgba(204,255,0,0.06) 0%, transparent 70%);
+          pointer-events: none;
+        }
+
+        .hero-eyebrow {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          font-size: 10px;
+          letter-spacing: 3px;
+          color: var(--neon);
+          text-transform: uppercase;
+          margin-bottom: 14px;
+        }
+
+        .hero-eyebrow-line {
+          display: inline-block;
+          width: 20px;
+          height: 1px;
+          background: var(--neon);
+        }
+
+        .hero-title {
+          font-family: 'Arial Black', 'Arial Bold', sans-serif;
+          font-size: clamp(48px, 14vw, 64px);
+          font-weight: 900;
+          line-height: 0.92;
+          text-transform: uppercase;
+          letter-spacing: -1px;
+        }
+
+        .hero-title .line-white { color: var(--white); }
+        .hero-title .line-neon  { color: var(--neon); font-style: italic; }
+
+        .hero-meta {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 20px;
+          margin-top: 20px;
+          padding-top: 16px;
+          border-top: 1px solid var(--border);
+        }
+
+        .hero-meta-item {
+          font-size: 9px;
+          letter-spacing: 1.5px;
+          color: var(--muted);
+          text-transform: uppercase;
+        }
+
+        .hero-meta-item span {
+          display: block;
+          color: var(--white);
+          font-size: 10px;
+          margin-top: 3px;
+          letter-spacing: 1px;
+        }
+
+        /* ── QUICK NAV ────────────────────────────────────── */
+        .quick-nav {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          padding: 16px 24px;
+          border-bottom: 1px solid var(--border);
+          background: var(--surface);
+        }
+
+        .nav-chip {
+          display: inline-block;
+          font-size: 9px;
+          letter-spacing: 1.5px;
+          color: var(--muted);
+          text-transform: uppercase;
+          text-decoration: none;
+          padding: 6px 12px;
+          border: 1px solid var(--border);
+          border-radius: 20px;
+          transition: border-color 0.2s, color 0.2s;
+        }
+
+        .nav-chip:hover { border-color: var(--neon); color: var(--neon); }
+
+        /* ── SECTIONS ─────────────────────────────────────── */
+        .section {
+          padding: 28px 24px;
+          border-bottom: 1px solid var(--border);
+        }
+
+        .section-eyebrow {
+          font-size: 9px;
+          letter-spacing: 2.5px;
+          text-transform: uppercase;
+          color: var(--neon);
+          margin-bottom: 10px;
+        }
+
+        .section-title {
+          font-family: 'Arial Black', 'Arial Bold', sans-serif;
+          font-size: clamp(20px, 5vw, 28px);
+          font-weight: 900;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          color: var(--white);
+          line-height: 1.1;
+          margin-bottom: 14px;
+        }
+
+        .section-body {
+          font-size: 13px;
+          color: var(--muted);
+          line-height: 1.75;
+          max-width: 600px;
+        }
+
+        .section-body strong { color: var(--white); font-weight: bold; }
+        .section-body .neon  { color: var(--neon); font-weight: bold; }
+        .section-body .blue  { color: var(--blue); }
+        .section-body .pink  { color: var(--pink); }
+        .section-body a      { color: var(--neon); text-decoration: none; border-bottom: 1px solid rgba(204,255,0,0.3); }
+        .section-body a:hover{ border-color: var(--neon); }
+
+        /* ── HIGHLIGHT SECTION ────────────────────────────── */
+        .section-highlight {
+          background: var(--surface);
+          padding: 28px 24px;
+          border-bottom: 1px solid var(--border);
+        }
+
+        .section-highlight .section-title { font-size: clamp(22px, 6vw, 34px); }
+
+        /* ── ICON SECTIONS ────────────────────────────────── */
+        .icon-row {
+          display: flex;
+          align-items: flex-start;
+          gap: 14px;
+          margin-bottom: 8px;
+        }
+
+        .icon-box {
+          width: 40px;
+          height: 40px;
+          flex-shrink: 0;
+          border: 1px solid var(--border);
+          border-radius: 8px;
+          background: var(--card2);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .icon-box svg { width: 20px; height: 20px; }
+
+        /* ── FEATURE CARDS ────────────────────────────────── */
+        .feature-grid {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          margin-top: 16px;
+        }
+
+        .feature-card {
+          display: flex;
+          align-items: flex-start;
+          gap: 14px;
+          background: var(--card);
+          border: 1px solid var(--border);
+          border-radius: var(--radius);
+          padding: 16px;
+        }
+
+        .feature-card-icon {
+          width: 42px; height: 42px;
+          flex-shrink: 0;
+          background: var(--card2);
+          border: 1px solid var(--border);
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .feature-card-icon svg { width: 20px; height: 20px; }
+
+        .feature-card-title {
+          font-family: 'Arial Black', sans-serif;
+          font-size: 12px;
+          font-weight: 900;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          color: var(--white);
+          margin-bottom: 4px;
+        }
+
+        .feature-card-body {
+          font-size: 12px;
+          color: var(--muted);
+          line-height: 1.6;
+        }
+
+        /* ── SOVEREIGNTY GRID ─────────────────────────────── */
+        .sov-grid {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          margin-top: 16px;
+        }
+
+        .sov-item {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          padding: 14px 16px;
+          background: var(--card);
+          border: 1px solid var(--border);
+          border-radius: var(--radius);
+        }
+
+        .sov-icon {
+          width: 36px; height: 36px;
+          flex-shrink: 0;
+          background: var(--card2);
+          border: 1px solid var(--dim);
+          border-radius: 6px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .sov-icon svg { width: 16px; height: 16px; }
+        .sov-title { font-family: 'Arial Black', sans-serif; font-size: 11px; font-weight: 900; color: var(--white); letter-spacing: 1px; margin-bottom: 2px; text-transform: uppercase; }
+        .sov-body  { font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+        /* ── ZERO SALE BANNER ─────────────────────────────── */
+        .zero-sale {
+          background: var(--card);
+          border: 1px solid var(--neon);
+          border-radius: var(--radius);
+          padding: 20px;
+          margin: 0 24px 0;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .zero-sale::after {
+          content: 'ZERO';
+          position: absolute;
+          right: -10px; top: 50%;
+          transform: translateY(-50%);
+          font-family: 'Arial Black', sans-serif;
+          font-size: 72px;
+          font-weight: 900;
+          color: rgba(204,255,0,0.04);
+          line-height: 1;
+          pointer-events: none;
+          letter-spacing: -2px;
+        }
+
+        .zero-sale-badge {
+          display: inline-block;
+          background: var(--neon);
+          color: #000;
+          font-family: 'Arial Black', sans-serif;
+          font-size: 9px;
+          font-weight: 900;
+          letter-spacing: 2px;
+          padding: 4px 12px;
+          border-radius: 20px;
+          margin-bottom: 12px;
+          text-transform: uppercase;
+        }
+
+        .zero-sale-title {
+          font-family: 'Arial Black', sans-serif;
+          font-size: clamp(22px, 6vw, 30px);
+          font-weight: 900;
+          text-transform: uppercase;
+          color: var(--white);
+          line-height: 1.1;
+          margin-bottom: 10px;
+        }
+
+        .zero-sale-body {
+          font-size: 13px;
+          color: var(--muted);
+          line-height: 1.7;
+          max-width: 540px;
+        }
+
+        /* ── DATA TABLE ───────────────────────────────────── */
+        .data-table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 16px;
+          font-size: 12px;
+        }
+
+        .data-table th {
+          text-align: left;
+          font-size: 9px;
+          letter-spacing: 1.5px;
+          text-transform: uppercase;
+          color: var(--muted);
+          padding: 8px 12px;
+          border-bottom: 1px solid var(--border);
+        }
+
+        .data-table td {
+          padding: 12px 12px;
+          border-bottom: 1px solid var(--border);
+          color: var(--muted);
+          vertical-align: top;
+        }
+
+        .data-table td:first-child { color: var(--white); font-weight: bold; }
+        .data-table tr:last-child td { border-bottom: none; }
+
+        .data-badge {
+          display: inline-block;
+          font-size: 9px;
+          letter-spacing: 1px;
+          padding: 3px 8px;
+          border-radius: 4px;
+          font-weight: bold;
+          text-transform: uppercase;
+        }
+
+        .badge-local  { background: rgba(204,255,0,0.12);  color: var(--neon); }
+        .badge-never  { background: rgba(255,45,120,0.12); color: var(--pink); }
+        .badge-opt    { background: rgba(0,229,255,0.12);  color: var(--blue); }
+
+        /* ── SOVEREIGNTY SECTION ──────────────────────────── */
+        .sov-header {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 24px 24px 0;
+        }
+
+        .sov-header-title {
+          font-family: 'Arial Black', sans-serif;
+          font-size: clamp(22px, 6vw, 28px);
+          font-weight: 900;
+          text-transform: uppercase;
+          color: var(--white);
+        }
+
+        .sov-lightning {
+          width: 28px; height: 28px;
+          background: var(--neon);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .sov-lightning svg { width: 14px; height: 14px; }
+
+        /* ── LEGAL ────────────────────────────────────────── */
+        .legal {
+          background: var(--surface);
+          padding: 28px 24px;
+          border-top: 1px solid var(--border);
+        }
+
+        .legal-title {
+          font-family: 'Arial Black', sans-serif;
+          font-size: 14px;
+          font-weight: 900;
+          letter-spacing: 2px;
+          text-transform: uppercase;
+          color: var(--white);
+          margin-bottom: 12px;
+        }
+
+        .legal-body {
+          font-size: 11px;
+          color: var(--muted);
+          line-height: 1.85;
+          max-width: 600px;
+        }
+
+        .legal-body a { color: var(--neon); text-decoration: none; }
+
+        /* ── FOOTER ───────────────────────────────────────── */
+        .footer {
+          padding: 20px 24px;
+          border-top: 1px solid var(--border);
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+        }
+
+        .footer-brand {
+          font-family: 'Arial Black', sans-serif;
+          font-size: 16px;
+          font-weight: 900;
+          letter-spacing: 4px;
+          color: var(--neon);
+        }
+
+        .footer-meta { font-size: 10px; color: var(--dim); letter-spacing: 1px; }
+
+        /* ── DIVIDER SPACING ──────────────────────────────── */
+        .gap { height: 24px; }
+    </style>
+</head>
+<body>
+
+<!-- ═══════════ HERO ═══════════ -->
+<div class="hero">
+    <div class="hero-eyebrow">
+        <span class="hero-eyebrow-line"></span>
+        SECURITY &amp; SOVEREIGNTY
+    </div>
+    <div class="hero-title">
+        <div class="line-white">PRIVACY</div>
+        <div class="line-neon">POLICY</div>
+    </div>
+    <div class="hero-meta">
+        <div class="hero-meta-item">
+            Effective date
+            <span>OCTOBER 2023</span>
+        </div>
+        <div class="hero-meta-item">
+            Version
+            <span>4.2.0-PULSE</span>
+        </div>
+        <div class="hero-meta-item">
+            Developer
+            <span>GOHEERAPPS DEV001</span>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════ QUICK NAV ═══════════ -->
+<div class="quick-nav">
+    <a class="nav-chip" href="#offline">Offline First</a>
+    <a class="nav-chip" href="#data">Data Collected</a>
+    <a class="nav-chip" href="#biometric">Biometrics</a>
+    <a class="nav-chip" href="#zero-sale">Zero Sale</a>
+    <a class="nav-chip" href="#sovereignty">Your Rights</a>
+    <a class="nav-chip" href="#security">Security</a>
+    <a class="nav-chip" href="#contact">Contact</a>
+</div>
+
+<!-- ═══════════ OFFLINE-FIRST MANDATE ═══════════ -->
+<div class="section-highlight" id="offline">
+    <div class="section-eyebrow">Core Philosophy</div>
+    <div class="section-title">The Offline-First Mandate</div>
+    <div class="section-body">
+        RepForgee is engineered with a <strong>Privacy-by-Hardening</strong> philosophy.
+        Unlike conventional fitness platforms, your kinetic data — reps, sets, weight, and
+        movement patterns — is <span class="neon">primary-stored locally</span> on your device.
+        We do not transmit your raw workout logs to any server unless you explicitly
+        trigger an <strong>"Elite Cloud Sync."</strong>
+        <br/><br/>
+        No account required. No email. No phone number. No identity.
+        Your data belongs entirely to you.
+    </div>
+
+    <div class="feature-grid" style="margin-top:20px;">
+        <div class="feature-card">
+            <div class="feature-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#CCFF00" stroke-width="2" stroke-linecap="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+            </div>
+            <div>
+                <div class="feature-card-title">Zero Login Required</div>
+                <div class="feature-card-body">No account, no email, no credentials of any kind. Open the app and train.</div>
+            </div>
+        </div>
+        <div class="feature-card">
+            <div class="feature-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#CCFF00" stroke-width="2" stroke-linecap="round">
+                    <rect x="2" y="3" width="20" height="14" rx="2"/>
+                    <path d="M8 21h8M12 17v4"/>
+                </svg>
+            </div>
+            <div>
+                <div class="feature-card-title">Fully Offline</div>
+                <div class="feature-card-body">All features work without an internet connection. Your workout data never leaves your device automatically.</div>
+            </div>
+        </div>
+        <div class="feature-card">
+            <div class="feature-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#CCFF00" stroke-width="2" stroke-linecap="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+            </div>
+            <div>
+                <div class="feature-card-title">Local Encrypted Storage</div>
+                <div class="feature-card-body">All data stored via Hive local database on your device with platform-level encryption.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════ WHAT WE COLLECT ═══════════ -->
+<div class="section" id="data">
+    <div class="section-eyebrow">Transparency</div>
+    <div class="section-title">What Data We Handle</div>
+    <div class="section-body">
+        The table below shows every category of data RepForgee touches — where it lives,
+        who can access it, and whether it ever leaves your device.
+    </div>
+
+    <div style="overflow-x:auto; margin-top:16px; border:1px solid var(--border); border-radius:var(--radius);">
+        <table class="data-table">
+            <thead>
+            <tr>
+                <th>Data Type</th>
+                <th>Where It Lives</th>
+                <th>Shared?</th>
+                <th>Details</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Workout logs</td>
+                <td><span class="data-badge badge-local">Device Only</span></td>
+                <td><span class="data-badge badge-never">Never</span></td>
+                <td>Sets, reps, weight, RPE, duration — stored in local Hive database.</td>
+            </tr>
+            <tr>
+                <td>Goals &amp; milestones</td>
+                <td><span class="data-badge badge-local">Device Only</span></td>
+                <td><span class="data-badge badge-never">Never</span></td>
+                <td>Personal targets remain entirely on-device.</td>
+            </tr>
+            <tr>
+                <td>Achievements</td>
+                <td><span class="data-badge badge-local">Device Only</span></td>
+                <td><span class="data-badge badge-never">Never</span></td>
+                <td>Badge progress computed and stored locally.</td>
+            </tr>
+            <tr>
+                <td>Progress charts</td>
+                <td><span class="data-badge badge-local">Device Only</span></td>
+                <td><span class="data-badge badge-never">Never</span></td>
+                <td>Trend data computed in-app. No analytics SDK.</td>
+            </tr>
+            <tr>
+                <td>Heart rate / BPM</td>
+                <td><span class="data-badge badge-local">Device Only</span></td>
+                <td><span class="data-badge badge-never">Never</span></td>
+                <td>Processed in Pulse Sandbox. Purged every 24h unless saved.</td>
+            </tr>
+            <tr>
+                <td>GPS / location</td>
+                <td><span class="data-badge badge-opt">Optional</span></td>
+                <td><span class="data-badge badge-never">Never</span></td>
+                <td>Only for outdoor runs. Obfuscated ±50m. Not stored historically.</td>
+            </tr>
+            <tr>
+                <td>Crash reports</td>
+                <td><span class="data-badge badge-never">Not Collected</span></td>
+                <td><span class="data-badge badge-never">Never</span></td>
+                <td>No crash reporting or analytics SDK is included in this build.</td>
+            </tr>
+            <tr>
+                <td>Advertising ID</td>
+                <td><span class="data-badge badge-never">Not Collected</span></td>
+                <td><span class="data-badge badge-never">Never</span></td>
+                <td>We do not read or transmit your device advertising ID.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ═══════════ BIOMETRIC ═══════════ -->
+<div class="section" id="biometric">
+    <div class="icon-row">
+        <div class="icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#00E5FF" stroke-width="2" stroke-linecap="round">
+                <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+            </svg>
+        </div>
+        <div>
+            <div class="section-eyebrow" style="margin-bottom:4px;">Health Sensors</div>
+            <div class="section-title" style="margin-bottom:0;">Biometric Processing</div>
+        </div>
+    </div>
+    <br/>
+    <div class="section-body">
+        Heart rate, SpO2, and VO2 Max data are processed inside the
+        <span class="blue">"Pulse Sandbox"</span> — an isolated memory space within the app.
+        This data is <strong>volatile</strong> and purged from memory every 24 hours unless
+        you explicitly save it to your encrypted local vault.
+        <br/><br/>
+        We never access your device's Health app or HealthKit data without explicit
+        permission, and we never write biometric data to any external service.
+    </div>
+</div>
+
+<!-- ═══════════ KINETIC LOCATION ═══════════ -->
+<div class="section">
+    <div class="icon-row">
+        <div class="icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#FF2D78" stroke-width="2" stroke-linecap="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+            </svg>
+        </div>
+        <div>
+            <div class="section-eyebrow" style="margin-bottom:4px;">Location Services</div>
+            <div class="section-title" style="margin-bottom:0;">Kinetic Location</div>
+        </div>
+    </div>
+    <br/>
+    <div class="section-body">
+        GPS tracking for outdoor runs uses high-precision mapping to measure distance and pace.
+        We <strong>never</strong> store a history of your "Home" or "Work" zones. All location
+        data is obfuscated by <span class="pink">±50 meters</span> before any optional social
+        sharing is performed.
+        <br/><br/>
+        Location permission is <strong>optional</strong>. The app functions fully without it —
+        outdoor run tracking is the only feature that requires location access.
+    </div>
+</div>
+
+<!-- ═══════════ ZERO SALE GUARANTEE ═══════════ -->
+<div class="gap"></div>
+<div class="section" id="zero-sale" style="padding-top:0; padding-bottom:0; border:none;">
+    <div class="zero-sale">
+        <div class="zero-sale-badge">Guaranteed</div>
+        <div class="zero-sale-title">Zero-Sale<br/>Guarantee</div>
+        <div class="zero-sale-body">
+            We treat your physical output as intellectual property. RepForgee
+            <span style="color:var(--neon);font-weight:bold;">NEVER</span> sells, rents, or
+            licenses your personal health metrics to insurance conglomerates, advertising
+            networks, data brokers, or any third party — ever.
+            <br/><br/>
+            Our revenue is derived from your <strong>performance</strong>, not your profile.
+            We sell software. Not sweat.
+        </div>
+    </div>
+</div>
+<div class="gap"></div>
+
+<!-- ═══════════ USER SOVEREIGNTY ═══════════ -->
+<div class="sov-header" id="sovereignty">
+    <div class="sov-header-title">User Sovereignty</div>
+    <div class="sov-lightning">
+        <svg viewBox="0 0 24 24" fill="#000" stroke="#000" stroke-width="1">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+        </svg>
+    </div>
+</div>
+
+<div style="padding: 16px 24px 24px;">
+    <div class="section-body" style="margin-bottom:16px;">
+        You retain full control over all data RepForgee stores on your device.
+        These rights are available from within the app settings at any time.
+    </div>
+    <div class="sov-grid">
+        <div class="sov-item">
+            <div class="sov-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#CCFF00" stroke-width="2" stroke-linecap="round">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6l-1 14H6L5 6"/>
+                    <path d="M10 11v6M14 11v6"/>
+                    <path d="M9 6V4h6v2"/>
+                </svg>
+            </div>
+            <div>
+                <div class="sov-title">Total Wipe Protocol</div>
+                <div class="sov-body">One-tap deletion of all local and cloud-synced data. Irreversible and instant. No recovery, no backup — your choice.</div>
+            </div>
+        </div>
+        <div class="sov-item">
+            <div class="sov-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#00E5FF" stroke-width="2" stroke-linecap="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+            </div>
+            <div>
+                <div class="sov-title">Kinetic Portability</div>
+                <div class="sov-body">Download your complete workout history in JSON or CSV format at any time from Settings → Export Data.</div>
+            </div>
+        </div>
+        <div class="sov-item">
+            <div class="sov-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#FF2D78" stroke-width="2" stroke-linecap="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+            </div>
+            <div>
+                <div class="sov-title">Right to Access</div>
+                <div class="sov-body">View every piece of data the app has stored via Settings → Data Audit. Full transparency, no hidden fields.</div>
+            </div>
+        </div>
+        <div class="sov-item">
+            <div class="sov-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#CCFF00" stroke-width="2" stroke-linecap="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    <polyline points="9 12 11 14 15 10"/>
+                </svg>
+            </div>
+            <div>
+                <div class="sov-title">Permission Control</div>
+                <div class="sov-body">All device permissions (location, sensors) can be revoked at any time via your device Settings → Apps → RepForgee.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════ SECURITY ═══════════ -->
+<div class="section-highlight" id="security">
+    <div class="section-eyebrow">Infrastructure</div>
+    <div class="section-title">Security Architecture</div>
+    <div class="section-body">
+        RepForgee employs multiple layers of protection to safeguard your data even in
+        the unlikely event your device is compromised.
+    </div>
+
+    <div class="feature-grid">
+        <div class="feature-card">
+            <div class="feature-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#CCFF00" stroke-width="2" stroke-linecap="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+            </div>
+            <div>
+                <div class="feature-card-title">Kinetic Crypt</div>
+                <div class="feature-card-body">All Hive database files are encrypted using AES-256 at rest. Your workout data is unreadable without the device unlock key.</div>
+            </div>
+        </div>
+        <div class="feature-card">
+            <div class="feature-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#00E5FF" stroke-width="2" stroke-linecap="round">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                </svg>
+            </div>
+            <div>
+                <div class="feature-card-title">Pulse Sandbox</div>
+                <div class="feature-card-body">Biometric sensor data is processed in an isolated memory space and never written to persistent storage unless explicitly saved.</div>
+            </div>
+        </div>
+        <div class="feature-card">
+            <div class="feature-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#FF2D78" stroke-width="2" stroke-linecap="round">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
+                </svg>
+            </div>
+            <div>
+                <div class="feature-card-title">Zero Analytics SDK</div>
+                <div class="feature-card-body">No Firebase, no Crashlytics, no third-party analytics. The app contains zero external tracking libraries.</div>
+            </div>
+        </div>
+        <div class="feature-card">
+            <div class="feature-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#CCFF00" stroke-width="2" stroke-linecap="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                </svg>
+            </div>
+            <div>
+                <div class="feature-card-title">No Permissions by Default</div>
+                <div class="feature-card-body">RepForgee declares zero permissions in AndroidManifest.xml. Location and sensor access are requested only when you use those features.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════ CHILDREN ═══════════ -->
+<div class="section">
+    <div class="section-eyebrow">Age Policy</div>
+    <div class="section-title">Children's Privacy</div>
+    <div class="section-body">
+        RepForgee is not directed at children under the age of 13. We do not knowingly
+        collect any personal information from children. If you are a parent or guardian
+        and believe your child has used this app, please contact us and we will assist
+        you in removing any locally stored data from the device.
+    </div>
+</div>
+
+<!-- ═══════════ CHANGES ═══════════ -->
+<div class="section">
+    <div class="section-eyebrow">Updates</div>
+    <div class="section-title">Policy Changes</div>
+    <div class="section-body">
+        We may update this Privacy Policy as the app evolves. Changes will be communicated
+        via an in-app notification on first launch after the update. Continued use of the
+        app after changes are posted constitutes acceptance of the revised policy.
+        <br/><br/>
+        Major changes — such as introducing any form of data transmission — will require
+        your <strong>explicit opt-in consent</strong> before taking effect.
+    </div>
+</div>
+
+<!-- ═══════════ CONTACT ═══════════ -->
+<div class="section" id="contact">
+    <div class="section-eyebrow">Get In Touch</div>
+    <div class="section-title">Contact & Data Audit</div>
+    <div class="section-body">
+        For inquiries regarding the Pulse Sandbox, requests for data audits, or any
+        privacy concerns, reach the developer directly:
+        <br/><br/>
+        <strong>Developer:</strong> GoheerAppsDeveloper001<br/>
+        <strong>Email:</strong> <a href="mailto:goheerahmad8@gmail.com">goheerahmad8@gmail.com</a><br/>
+        <strong>Subject line:</strong> <span class="blue">[RepForgee Privacy]</span>
+        <br/><br/>
+        All legitimate privacy requests will be acknowledged within <strong>7 business days</strong>.
+    </div>
+</div>
+
+<!-- ═══════════ LEGAL APPENDIX ═══════════ -->
+<div class="legal">
+    <div class="legal-title">Legal Appendix</div>
+    <div class="legal-body">
+        By engaging with the RepForgee interface, you acknowledge that while we employ
+        platform-level encryption for local storage, the ultimate security of your hardware
+        remains your responsibility. RepForgee reserves the right to update these protocols
+        as new security standards emerge.
+        <br/><br/>
+        This Privacy Policy is governed by the laws of Pakistan. Any disputes arising from
+        this policy shall be resolved under those laws.
+        <br/><br/>
+        If you are located in the European Economic Area (EEA), you have rights under the
+        General Data Protection Regulation (GDPR). Since we process no personal data on our
+        servers, we act solely as a local data processor on your device.
+        <br/><br/>
+        &copy; 2025 GoheerAppsDeveloper001. All kinetic rights reserved.
+    </div>
+</div>
+
+<!-- ═══════════ FOOTER ═══════════ -->
+<div class="footer">
+    <div class="footer-brand">REPFORGEE</div>
+    <div class="footer-meta">PRIVACY POLICY &nbsp;·&nbsp; v4.2.0 &nbsp;·&nbsp; OCT 2023</div>
+</div>
+
+</body>
+</html>
