@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import '../models/models.dart';
+import '../services/storage_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/common_widgets.dart';
 import '../widgets/exercise_card.dart';
@@ -17,14 +19,15 @@ class WorkoutScreen extends StatefulWidget {
 
 class _WorkoutScreenState extends State<WorkoutScreen> {
   // Timer
-  int _seconds = 42 * 60 + 18;
+  int    _seconds      = 0;
   Timer? _timer;
-  bool _timerRunning = true;
+  bool   _timerRunning = false;
 
-  // Session data
-  double _totalVolume = 12450;
-  final int _bpm = 144;
+  double _totalVolume = 0;
   final List<ExerciseLog> _exercises = [];
+
+  StorageService? _storage;
+  String _selectedCategory = 'PULL DAY';
 
   String get _timerStr {
     final m = (_seconds ~/ 60).toString().padLeft(2, '0');
@@ -35,23 +38,26 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
   @override
   void initState() {
     super.initState();
-    _startTimer();
-    // Add default exercise for demo
-    _exercises.add(ExerciseLog(
-      name: 'BARBELL DEADLIFT',
-      category: 'PULL DAY',
-      previousBest: '120KG',
-      sets: [
-        WorkoutSet(weight: 80, reps: 12, rpe: 7),
-        WorkoutSet(weight: 90, reps: 10, rpe: 8),
-      ],
-    ));
+    _initStorage();
+    // Timer does NOT auto-start — user presses START
   }
 
-  void _startTimer() {
-    _timerRunning = true;
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      setState(() => _seconds++);
+  Future<void> _initStorage() async {
+    _storage = await StorageService.getInstance();
+    setState(() {});
+  }
+
+  void _toggleTimer() {
+    setState(() {
+      if (_timerRunning) {
+        _timer?.cancel();
+        _timerRunning = false;
+      } else {
+        _timerRunning = true;
+        _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+          setState(() => _seconds++);
+        });
+      }
     });
   }
 
@@ -68,15 +74,17 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
       backgroundColor: Colors.transparent,
       builder: (_) => ExercisePickerSheet(
         onSelected: (name, category) {
+          final pr = _storage?.getPersonalBestDisplay(name);
           setState(() {
             _exercises.add(ExerciseLog(
               name: name.toUpperCase(),
               category: category,
-              previousBest: _getPreviousBest(name),
+              previousBest: pr,
             ));
           });
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('$name ADDED', style: GoogleFonts.spaceMono(color: AppTheme.bg, fontSize: 10, letterSpacing: 1)),
+            content: Text('$name ADDED',
+                style: GoogleFonts.spaceMono(color: AppTheme.bg, fontSize: 10, letterSpacing: 1)),
             backgroundColor: AppTheme.neonGreen,
             duration: const Duration(seconds: 2),
             behavior: SnackBarBehavior.floating,
@@ -87,36 +95,59 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
     );
   }
 
-  String? _getPreviousBest(String name) {
-    const bests = {'Deadlift': '180KG', 'Bench Press': '100KG', 'Squats': '160KG'};
-    return bests[name];
-  }
-
   void _finishSession() {
+    if (_exercises.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('ADD AT LEAST ONE EXERCISE',
+            style: GoogleFonts.spaceMono(color: AppTheme.bg, fontSize: 10, letterSpacing: 1)),
+        backgroundColor: AppTheme.neonPink,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ));
+      return;
+    }
+
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: AppTheme.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16), side: const BorderSide(color: AppTheme.border)),
-        title: Text('FINISH SESSION?', style: GoogleFonts.barlow(color: AppTheme.primary, fontSize: 20, fontWeight: FontWeight.w900, letterSpacing: 2)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: const BorderSide(color: AppTheme.border),
+        ),
+        title: Text('FINISH SESSION?', style: GoogleFonts.barlow(
+          color: AppTheme.primary, fontSize: 20,
+          fontWeight: FontWeight.w900, letterSpacing: 2,
+        )),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Duration: $_timerStr', style: GoogleFonts.spaceMono(color: AppTheme.textMuted, fontSize: 12)),
             const SizedBox(height: 4),
-            Text('Total volume: ${_totalVolume.toInt()}kg', style: GoogleFonts.spaceMono(color: AppTheme.textMuted, fontSize: 12)),
+            Text('Volume: ${(_totalVolume / 1000).toStringAsFixed(1)}t',
+                style: GoogleFonts.spaceMono(color: AppTheme.textMuted, fontSize: 12)),
             const SizedBox(height: 4),
-            Text('Exercises: ${_exercises.length}', style: GoogleFonts.spaceMono(color: AppTheme.textMuted, fontSize: 12)),
+            Text('Exercises: ${_exercises.length}',
+                style: GoogleFonts.spaceMono(color: AppTheme.textMuted, fontSize: 12)),
+            const SizedBox(height: 4),
+            Text('Total sets: ${_exercises.fold(0, (s, e) => s + e.sets.length)}',
+                style: GoogleFonts.spaceMono(color: AppTheme.textMuted, fontSize: 12)),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text('CANCEL', style: GoogleFonts.spaceMono(color: AppTheme.textMuted, fontSize: 10))),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('CANCEL', style: GoogleFonts.spaceMono(color: AppTheme.textMuted, fontSize: 10)),
+          ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.neonGreen, foregroundColor: AppTheme.bg, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
-            onPressed: () {
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.neonGreen, foregroundColor: AppTheme.bg,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+            onPressed: () async {
               Navigator.pop(context);
-              Navigator.pushReplacementNamed(context, '/history');
+              await _saveAndNavigate();
             },
             child: Text('FINISH', style: GoogleFonts.barlow(fontSize: 14, fontWeight: FontWeight.w900, letterSpacing: 2)),
           ),
@@ -125,41 +156,54 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
     );
   }
 
+  Future<void> _saveAndNavigate() async {
+    if (_storage == null) return;
+    _timer?.cancel();
+
+    final now   = DateTime.now();
+    final title = _buildSessionTitle();
+    final session = WorkoutSession(
+      date:            now,
+      title:           title,
+      exercises:       List.from(_exercises),
+      durationSeconds: _seconds,
+    );
+
+    await _storage!.saveWorkout(session);
+    _storage!.updateStreakForToday();
+
+    if (mounted) {
+      Navigator.pushReplacementNamed(context, '/history');
+    }
+  }
+
+  String _buildSessionTitle() {
+    final cats = _exercises.map((e) => e.category).toSet();
+    if (cats.length == 1) return '${cats.first} SESSION';
+    if (cats.contains('PULL DAY') || cats.contains('BACK')) {
+      return 'PULL DAY / HYPERTROPHY';
+    }
+    if (cats.contains('CHEST')) return 'PUSH DAY SESSION';
+    if (cats.contains('LEGS'))  return 'LOWER BODY SESSION';
+    return 'FULL BODY SESSION';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.bg,
+      drawer: const RepForgeDrawer(),
       body: CustomScrollView(
         slivers: [
-          // AppBar
-          SliverAppBar(
-            pinned: true,
-            backgroundColor: AppTheme.bg,
-            automaticallyImplyLeading: false,
-            elevation: 0,
-            title: Row(
-              children: [
-                const Icon(Icons.menu, color: AppTheme.textMuted, size: 22),
-                const SizedBox(width: 12),
-                Text('REPFORGE', style: GoogleFonts.barlow(color: AppTheme.neonGreen, fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 3)),
-                const Spacer(),
-                Container(
-                  width: 36, height: 36,
-                  decoration: BoxDecoration(color: AppTheme.card, borderRadius: BorderRadius.circular(8), border: Border.all(color: AppTheme.border)),
-                  child: const Icon(Icons.person, color: AppTheme.textMuted, size: 20),
-                ),
-              ],
-            ),
-          ),
+          repForgeAppBar(context),
 
           SliverToBoxAdapter(child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ── Session header ─────────────────────────────────────────
               _buildSessionHeader(),
               const SizedBox(height: 16),
 
-              // ── Search bar ─────────────────────────────────────────────
+              // Search / exercise picker
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: GestureDetector(
@@ -171,51 +215,43 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: AppTheme.border),
                     ),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.search, color: AppTheme.textMuted, size: 18),
-                        const SizedBox(width: 10),
-                        Text('SEARCH EXERCISE OR MUSCLE GROUP...', style: GoogleFonts.spaceMono(
-                          color: AppTheme.textDim, fontSize: 10, letterSpacing: 0.5,
-                        )),
-                      ],
-                    ),
+                    child: Row(children: [
+                      const Icon(Icons.search, color: AppTheme.textMuted, size: 18),
+                      const SizedBox(width: 10),
+                      Text('SEARCH EXERCISE OR MUSCLE GROUP...', style: GoogleFonts.spaceMono(
+                        color: AppTheme.textDim, fontSize: 10, letterSpacing: 0.5,
+                      )),
+                    ]),
                   ),
                 ).animate().fadeIn(duration: 400.ms, delay: 200.ms),
               ),
 
               const SizedBox(height: 14),
-
-              // ── Category chips ─────────────────────────────────────────
               _buildCategoryChips(),
-
               const SizedBox(height: 20),
 
-              // ── Current Set label ──────────────────────────────────────
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  children: [
-                    Text('CURRENT SET', style: GoogleFonts.barlow(
-                      color: AppTheme.primary, fontSize: 22, fontWeight: FontWeight.w900, fontStyle: FontStyle.italic,
-                    )),
-                    const SizedBox(width: 10),
-                    Container(width: 48, height: 2, color: AppTheme.neonGreen),
-                    const Spacer(),
-                    Row(
-                      children: [
-                        Icon(Icons.history, color: AppTheme.neonBlue, size: 12),
-                        const SizedBox(width: 4),
-                        Text('PREVIOUS BEST: 120KG', style: GoogleFonts.spaceMono(color: AppTheme.neonBlue, fontSize: 8, letterSpacing: 0.5)),
-                      ],
-                    ),
-                  ],
-                ),
+                child: Row(children: [
+                  Text('CURRENT SET', style: GoogleFonts.barlow(
+                    color: AppTheme.primary, fontSize: 22,
+                    fontWeight: FontWeight.w900, fontStyle: FontStyle.italic,
+                  )),
+                  const SizedBox(width: 10),
+                  Container(width: 48, height: 2, color: AppTheme.neonGreen),
+                  const Spacer(),
+                  if (_exercises.isNotEmpty && _exercises.first.previousBest != null)
+                    Row(children: [
+                      Icon(Icons.history, color: AppTheme.neonBlue, size: 12),
+                      const SizedBox(width: 4),
+                      Text('PREV BEST: ${_exercises.first.previousBest}',
+                          style: GoogleFonts.spaceMono(color: AppTheme.neonBlue, fontSize: 8, letterSpacing: 0.5)),
+                    ]),
+                ]),
               ),
 
               const SizedBox(height: 12),
 
-              // ── Exercise cards ─────────────────────────────────────────
               ..._exercises.map((ex) => ExerciseCard(
                 key: ValueKey(ex.id),
                 exercise: ex,
@@ -223,12 +259,33 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                   ex.sets.add(set);
                   _totalVolume += set.volume;
                 }),
-                onRemove: () => setState(() => _exercises.removeWhere((e) => e.id == ex.id)),
+                onRemove: () => setState(() {
+                  _totalVolume -= ex.totalVolume;
+                  _exercises.removeWhere((e) => e.id == ex.id);
+                }),
               )),
 
-              // ── Add Exercise button ────────────────────────────────────
+              // Empty state
+              if (_exercises.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.all(32),
+                  child: Column(children: [
+                    Icon(Icons.fitness_center, color: AppTheme.textDim, size: 48),
+                    const SizedBox(height: 12),
+                    Text('NO EXERCISES YET', style: GoogleFonts.barlow(
+                      color: AppTheme.textDim, fontSize: 16, fontWeight: FontWeight.w800,
+                    )),
+                    const SizedBox(height: 4),
+                    Text('Tap "ADD EXERCISE" or use Quick Log below',
+                      style: GoogleFonts.spaceMono(color: AppTheme.textDim, fontSize: 9),
+                      textAlign: TextAlign.center,
+                    ),
+                  ]),
+                ),
+
+              // Add Exercise button
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
                 child: OutlinedButton.icon(
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppTheme.neonGreen,
@@ -244,22 +301,21 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                 ).animate().fadeIn(duration: 300.ms),
               ),
 
-              // ── Quick log chips ────────────────────────────────────────
               const SizedBox(height: 16),
               Padding(
                 padding: const EdgeInsets.only(left: 16),
-                child: Text('QUICK LOG', style: GoogleFonts.spaceMono(color: AppTheme.textMuted, fontSize: 9, letterSpacing: 2)),
+                child: Text('QUICK LOG', style: GoogleFonts.spaceMono(
+                  color: AppTheme.textMuted, fontSize: 9, letterSpacing: 2,
+                )),
               ),
               const SizedBox(height: 10),
               _buildQuickLogChips(),
-
               const SizedBox(height: 100),
             ],
           )),
         ],
       ),
 
-      // Finish session FAB
       floatingActionButton: GestureDetector(
         onTap: _finishSession,
         child: Container(
@@ -275,7 +331,8 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
               const Icon(Icons.check_circle_outline, color: Colors.white, size: 18),
               const SizedBox(width: 8),
               Text('FINISH SESSION', style: GoogleFonts.barlow(
-                color: Colors.white, fontSize: 14, fontWeight: FontWeight.w900, letterSpacing: 2,
+                color: Colors.white, fontSize: 14,
+                fontWeight: FontWeight.w900, letterSpacing: 2,
               )),
             ],
           ),
@@ -297,56 +354,76 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
         border: Border.all(color: AppTheme.neonGreen.withOpacity(0.25)),
         boxShadow: [BoxShadow(color: AppTheme.neonGreen.withOpacity(0.04), blurRadius: 24)],
       ),
-      child: Row(
-        children: [
-          // Timer
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('ACTIVE SESSION', style: GoogleFonts.spaceMono(color: AppTheme.textMuted, fontSize: 8, letterSpacing: 1.5)),
-              const SizedBox(height: 4),
-              Text(_timerStr, style: GoogleFonts.barlow(
-                color: AppTheme.neonGreen, fontSize: 38, fontWeight: FontWeight.w900, letterSpacing: 2, height: 1,
-              )),
-            ],
-          ),
-          const Spacer(),
-          // Volume
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text('VOLUME', style: GoogleFonts.spaceMono(color: AppTheme.textMuted, fontSize: 8, letterSpacing: 1.5)),
-              const SizedBox(height: 4),
-              Text('${(_totalVolume / 1000).toStringAsFixed(1).replaceAll('.', ',')}', style: GoogleFonts.barlow(
-                color: AppTheme.primary, fontSize: 22, fontWeight: FontWeight.w800,
-              )),
-              Text('KG', style: GoogleFonts.spaceMono(color: AppTheme.textMuted, fontSize: 9)),
-            ],
-          ),
-          const SizedBox(width: 20),
-          // BPM
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text('BPM', style: GoogleFonts.spaceMono(color: AppTheme.textMuted, fontSize: 8, letterSpacing: 1.5)),
-              const SizedBox(height: 4),
-              Row(
-                children: [
-                  const Icon(Icons.favorite, color: AppTheme.neonPink, size: 14),
+      child: Row(children: [
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text('ACTIVE SESSION', style: GoogleFonts.spaceMono(
+            color: AppTheme.textMuted, fontSize: 8, letterSpacing: 1.5,
+          )),
+          const SizedBox(height: 6),
+          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Text(_timerStr, style: GoogleFonts.barlow(
+              color: _timerRunning ? AppTheme.neonGreen : AppTheme.textDim,
+              fontSize: 38, fontWeight: FontWeight.w900, letterSpacing: 2, height: 1,
+            )),
+            const SizedBox(width: 10),
+            // ── START / PAUSE button ────────────────────────────
+            GestureDetector(
+              onTap: _toggleTimer,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: _timerRunning
+                      ? AppTheme.neonPink.withOpacity(0.15)
+                      : AppTheme.neonGreen.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(
+                    color: _timerRunning ? AppTheme.neonPink : AppTheme.neonGreen,
+                    width: 1,
+                  ),
+                ),
+                child: Row(mainAxisSize: MainAxisSize.min, children: [
+                  Icon(
+                    _timerRunning ? Icons.pause : Icons.play_arrow,
+                    color: _timerRunning ? AppTheme.neonPink : AppTheme.neonGreen,
+                    size: 14,
+                  ),
                   const SizedBox(width: 4),
-                  Text('$_bpm', style: GoogleFonts.barlow(
-                    color: AppTheme.neonPink, fontSize: 22, fontWeight: FontWeight.w800,
-                  )),
-                ],
+                  Text(
+                    _timerRunning ? 'PAUSE' : 'START',
+                    style: GoogleFonts.spaceMono(
+                      color: _timerRunning ? AppTheme.neonPink : AppTheme.neonGreen,
+                      fontSize: 8, fontWeight: FontWeight.w700, letterSpacing: 1,
+                    ),
+                  ),
+                ]),
               ),
-            ],
+            ),
+          ]),
+        ]),
+        const Spacer(),
+        Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+          Text('VOLUME', style: GoogleFonts.spaceMono(color: AppTheme.textMuted, fontSize: 8, letterSpacing: 1.5)),
+          const SizedBox(height: 4),
+          Text(
+            _totalVolume >= 1000
+                ? '${(_totalVolume / 1000).toStringAsFixed(1)}t'
+                : '${_totalVolume.toInt()}kg',
+            style: GoogleFonts.barlow(color: AppTheme.primary, fontSize: 22, fontWeight: FontWeight.w800),
           ),
-        ],
-      ),
+        ]),
+        const SizedBox(width: 20),
+        Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+          Text('SETS', style: GoogleFonts.spaceMono(color: AppTheme.textMuted, fontSize: 8, letterSpacing: 1.5)),
+          const SizedBox(height: 4),
+          Text(
+            '${_exercises.fold(0, (s, e) => s + e.sets.length)}',
+            style: GoogleFonts.barlow(color: AppTheme.neonBlue, fontSize: 22, fontWeight: FontWeight.w800),
+          ),
+        ]),
+      ]),
     ).animate().fadeIn(duration: 500.ms).slideY(begin: -0.08);
   }
-
-  String _selectedCategory = 'PULL DAY';
 
   Widget _buildCategoryChips() {
     final cats = ExerciseLibrary.all.keys.toList();
@@ -383,10 +460,10 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
 
   Widget _buildQuickLogChips() {
     final quickItems = [
-      ('💪 PUSHUPS', 'Pushups', '30 REPS'),
-      ('🏃 RUNNING', 'Running', '10 MIN'),
-      ('⏱️ PLANK', 'Plank', '60 SEC'),
-      ('🔝 PULL-UPS', 'Pull-ups', '12 REPS'),
+      ('💪 PUSHUPS', 'Pushups', 'BODY'),
+      ('🏃 RUNNING', 'Running', 'CARDIO'),
+      ('⏱️ PLANK', 'Plank', 'CORE'),
+      ('🔝 PULL-UPS', 'Pull-ups', 'BACK'),
     ];
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -396,13 +473,11 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
           onTap: () {
             HapticFeedback.selectionClick();
             setState(() {
-              _exercises.add(ExerciseLog(
-                name: '${item.$2} (${item.$3})',
-                category: 'QUICK',
-              ));
+              _exercises.add(ExerciseLog(name: item.$2.toUpperCase(), category: item.$3));
             });
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('⚡ ${item.$2} LOGGED', style: GoogleFonts.spaceMono(color: AppTheme.bg, fontSize: 10)),
+              content: Text('⚡ ${item.$2} ADDED',
+                  style: GoogleFonts.spaceMono(color: AppTheme.bg, fontSize: 10)),
               backgroundColor: AppTheme.neonBlue,
               duration: const Duration(seconds: 2),
               behavior: SnackBarBehavior.floating,
